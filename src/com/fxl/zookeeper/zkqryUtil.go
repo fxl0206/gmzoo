@@ -12,7 +12,7 @@ import (
 type znode struct {
 	Id     int
 	Name   string
-	Path   string
+	Url    string
 	Childs []znode
 }
 
