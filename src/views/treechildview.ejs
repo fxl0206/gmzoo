@@ -1,0 +1,16 @@
+<ul>
+<%function showmenu(menu){%>
+        <%for(var i=0;i<menu.childs.length;i++){%>
+            <%if(menu.childs[i].childs.length>0){ %>
+                <li><a href="<%=menu.childs[i].url%>" ref="<%=menu.childs[i].id%>" target="_parent"><%=menu.childs[i].name%></a></li>
+                    <ul show="true">
+                    <%showmenu(menu.childs[i]);%>
+                    </ul>
+<%          }else if(renderobj.key!=null&&menu.childs[i].name.indexOf(renderobj.key)>-1){%>
+             <li><a href="<%=menu.childs[i].url%>" ref="<%=menu.childs[i].id%>" target="_parent"><%=menu.childs[i].name%></a></li>
+<%          }%>
+<%
+        }
+}%>
+<%showmenu(renderobj.themm);%>
+</ul>

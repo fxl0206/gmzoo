@@ -1,1 +1,1 @@
-export GOPATH=/Users/fxl0206/wkplace/golang-websocket-zk
+export GOPATH=/Users/fxl0206/Desktop/goplace/golang-websocket-zk
