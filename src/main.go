@@ -27,10 +27,11 @@ func getJson(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(buf))
 }
 func onConnect(ws *websocket.Conn) {
+        fmt.Println("#########################################################################")
 	websocket.JSON.Send(ws, zk.GetZooJson("/"))
 }
 func main() {
-	http.Handle("/chat", websocket.Handler(onConnect))
+	http.Handle("/", websocket.Handler(onConnect))
 	http.HandleFunc("/getJson", getJson)
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
