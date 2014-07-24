@@ -29,7 +29,7 @@ func getJson(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	http.HandleFunc("/getJson", getJson)
-	err := http.ListenAndServe(":8001", nil)
+	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
