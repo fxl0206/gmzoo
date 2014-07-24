@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/go.net/websocket"
 	zk "com/fxl/zookeeper"
 	"fmt"
 	"log"
@@ -24,12 +25,14 @@ func getJson(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	fmt.Println(string(buf))
-	//fmt.Fprintln(w, string(buf))
-
+}
+func onConnect(ws *websocket.Conn) {
+	websocket.JSON.Send(ws, zk.GetZooJson("/"))
 }
 func main() {
+	http.Handle("/chat", websocket.Handler(onConnect))
 	http.HandleFunc("/getJson", getJson)
-	err := http.ListenAndServe(":8001", nil)
+	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
