@@ -2,7 +2,7 @@ package wbsocket
 
 import (
 	"code.google.com/p/go.net/websocket"
-	zk "zookeeper.fxl.com"
+	zk "fxl.com/utils"
 )
 
 func EchoMessage(ws *websocket.Conn) {

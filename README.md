@@ -1,3 +1,3 @@
 golang-websocket-zk
 ===================
-go提供查询zookeeper websocket服务
+golang monitor zookeeper server status websocket app
