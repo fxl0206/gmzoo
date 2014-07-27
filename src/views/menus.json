@@ -13,7 +13,7 @@
                 "Childs":[]
             },{
                 "Id":"node4",
-                "Name":"zookeeper","Url":"http://115.29.8.106:3001/node-zk",
+                "Name":"zookeeper","Url":"http://115.29.8.106:3000",
                 "Childs":[]
             },{
                 "Id":"node5",
