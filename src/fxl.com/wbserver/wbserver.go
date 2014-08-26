@@ -5,6 +5,7 @@ import (
 	"controllers/json"
 	//"controllers/wbsocket"
 	"fmt"
+	zk "fxl.com/utils"
 	"log"
 	"net/http"
 	"regexp"
@@ -32,9 +33,15 @@ func (this *WbServer) Start() {
 		log.Fatal("ListenAndServe:", err)
 	}
 }
-func ChatWith(ws *websocket.Conn) {
-	var err error
 
+/*func sendZkStats() {
+	zk.EvtCache
+}*/
+
+func ChatWith(ws *websocket.Conn) {
+	zk.WsSlise = ws
+	var err error
+	websocket.Message.Send(ws, "onConnection!")
 	for {
 		var reply string
 

@@ -74,7 +74,7 @@ $(function(){
 </html>
   <script type="text/javascript">
     var webSocket =
-      new WebSocket('ws://115.29.8.106:8000');
+      new WebSocket('ws://127.0.0.1:8000/ws');
 
     webSocket.onerror = function(event) {
       onError(event)
@@ -89,8 +89,11 @@ $(function(){
     };
 
     function onMessage(event) {
-       themm=eval('('+event.data+')');
-       pstree();
+       //themm=eval('('+event.data+')');
+      // pstree();
+	  //alert(event);
+	document.getElementById('messages').innerHTML
+        = event.data;
     }
 
     function onOpen(event) {
