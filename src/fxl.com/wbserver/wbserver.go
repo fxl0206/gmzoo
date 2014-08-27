@@ -23,6 +23,7 @@ func StaticServer(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		log.Println(w.Header().Get("Content-Type"))
 	}
+	log.Println(r.URL.Path)
 	http.ServeFile(w, r, r.URL.Path[len("/"):])
 }
 func (this *WbServer) Start() {
