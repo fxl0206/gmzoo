@@ -50,24 +50,7 @@ $(function(){
 <input type="text" id="searchKey" value='' onkeyup="pstree()"/>
 </div>
 <div class="st_tree" id="qst_tree">
-<!--
-<ul>
-        <li><a href="#" ref="hyjm">欢迎页</a></li>
-        <li><a href="#" ref="xtgl">系统工具</a></li>
-    <ul show="true">
-                <li><a href="#" ref="yhgl">Nginx</a></li>
-                <li><a href="#" ref="rzck">Zookeper</a></li>
-        <li><a href="#" ref="ckgl">SVN</a></li>
-    <ul>
-                <li><a href="#" ref="kcgl">nodezk</a></li>
-        <ul>
-            <li><a href="#" ref="yhgl">trunk</a></li>
-            <li><a href="#" ref="rzck">tags</a></li>
-            <li><a href="#" ref="rzck">brunch</a></li>
-        </ul>
-        </ul>
-        </ul>
-</ul>-->
+
 </div>
  <div id="messages"></div>
 </body>
@@ -87,13 +70,33 @@ $(function(){
     webSocket.onmessage = function(event) {
       onMessage(event)
     };
-
+	String.prototype.startWith=function(str){     
+						  var reg=new RegExp("^"+str);     
+						  return reg.test(this);        
+	}  
+	function upData(group,obj){
+		if(obj.Name=="/"){
+			themm=obj;
+			return;
+		}
+		for(var i=0;group&&i<group.Childs.length;i++){
+			var child=group.Childs[i];
+			if(child.Name==obj.Name){
+				group.Childs[i]=obj;
+				return;
+			}else if(obj.Name.startWith(child.Name)){
+				upData(child,obj)
+			}
+		}
+	}
     function onMessage(event) {
-       //themm=eval('('+event.data+')');
-      // pstree();
-	  //alert(event);
-	document.getElementById('messages').innerHTML
-        = event.data;
+		try{
+			upData(themm,eval('('+event.data+')'))
+			//document.getElementById('messages').innerHTML ="node updated!";
+			pstree();
+		}catch(e){
+			document.getElementById('messages').innerHTML =event.data;
+		}
     }
 
     function onOpen(event) {

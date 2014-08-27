@@ -14,7 +14,7 @@ func EchoMenu(w http.ResponseWriter, r *http.Request) {
 	//t.ParseFiles("views/menus.json")
 	//t, _ = t.Parse("/views/menus.json")
 	//t.Execute(w, nil)
-	fmt.Fprintln(w, string(zk.GetZooJson("/")))
+	fmt.Fprintln(w, zk.GetZooJson("/"))
 	/*fileName := "menus.json"
 	fl, err := os.Open(fileName)
 	defer fl.Close()

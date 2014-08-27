@@ -3,10 +3,9 @@ package zkUtil
 import (
 	"code.google.com/p/go.net/websocket"
 	"encoding/json"
-	"fmt"
 	"github.com/samuel/go-zookeeper/zk"
 	"log"
-	"os"
+	//"strings"
 	"time"
 )
 
@@ -27,41 +26,18 @@ var WsSlise *websocket.Conn
 func nodeChage(zh <-chan zk.Event) {
 	e := <-zh
 	wType := e.Type
-	fmt.Println("%V", wType)
+	log.Println("%V", wType)
 	path := e.Path
+	EvtCache[path] = nil
 	if WsSlise != nil {
-		fmt.Println("%V", path)
 		switch wType {
 		case zk.EventNodeChildrenChanged:
-			Zc = getConnection()
-			children, _, nodeEvt, err := Zc.ChildrenW(path)
-			if err != nil {
-				log.Println(err)
-				EvtCache[path] = nil
-			} else {
-				EvtCache[path] = nodeEvt
-				go nodeChage(nodeEvt)
-				for _, child := range children {
-					if path == "/" {
-						path = ""
-					}
-					cPath := path + "/" + child
-					if EvtCache[cPath] == nil {
-						_, _, evt, err := Zc.ChildrenW(cPath)
-						if err != nil {
-							log.Println(err)
-						}
-						EvtCache[cPath] = evt
-						websocket.Message.Send(WsSlise, "{\"type\":\"add\",\"path\":\""+cPath+"\"}")
-						go nodeChage(evt)
-					}
-				}
-			}
+			jData := GetZooJson(path)
+			websocket.Message.Send(WsSlise, jData)
 		case zk.EventNodeDataChanged:
 			websocket.Message.Send(WsSlise, "data change:"+path)
 		case zk.EventNodeDeleted:
-			websocket.Message.Send(WsSlise, "node deleted:"+path)
-			EvtCache[path] = nil
+			websocket.Message.Send(WsSlise, "info: node ["+path+"] is deleted!")
 		case zk.EventNodeCreated:
 			websocket.Message.Send(WsSlise, "node created:"+path)
 		default:
@@ -77,50 +53,91 @@ func qryNode(id int, rPath string, c *zk.Conn) znode {
 
 	children, _, nodeEvt, err := c.ChildrenW(rPath)
 	ret := znode{id, rPath, rPath, []znode{}}
-	EvtCache[rPath] = nodeEvt
-	go nodeChage(nodeEvt)
 	if err != nil {
 		log.Println(err)
-	}
-	for i, child := range children {
-		if rPath == "/" {
-			rPath = ""
+		EvtCache[rPath] = nil
+	} else {
+		if EvtCache[rPath] == nil {
+			go nodeChage(nodeEvt)
 		}
-		cPath := rPath + "/" + child
-		cRet := qryNode(i, cPath, c)
-		ret.addChild(cRet)
+		EvtCache[rPath] = nodeEvt
+		for i, child := range children {
+			fixPath := rPath
+			if fixPath == "/" {
+				fixPath = ""
+			}
+			cPath := fixPath + "/" + child
+			cRet := qryNode(i, cPath, c)
+			ret.addChild(cRet)
+		}
 	}
 	return ret
 }
 
-var Zc *zk.Conn
+var Zc *zk.Conn = nil
 
-func getConnection() *zk.Conn {
-	//if Zc == nil {
+func GetConnection() *zk.Conn {
+	if Zc == nil {
+		Zc = getNewConnection()
+	} else {
+		stat := Zc.State()
+		log.Println(stat)
+		switch stat {
+		case zk.StateUnknown:
+			log.Print("new connection:")
+			Zc = getNewConnection()
+			log.Println(stat)
+		}
+	}
+	return Zc
+}
+func getNewConnection() *zk.Conn {
 	c, _, err := zk.Connect([]string{"115.29.8.106"}, time.Second) //*10)
 	if err != nil {
 		panic(err)
 	}
-	Zc = c
-	//}
-	return Zc
+	return c
 }
-func GetZooJson(path string) []byte {
-	Zc = getConnection()
-	group := qryNode(0, path, Zc)
-	v, err := json.Marshal(group)
+func GetZooJson(path string) string {
+	Zc = GetConnection()
+	node := qryNode(0, path, Zc)
+	return node.ToJsonStr()
+}
+func (n *znode) ToJsonStr() string {
+	v, err := json.Marshal(n)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
-	return v
-}
-func main() {
-
-	os.Stdout.Write(GetZooJson("/"))
-	log.Println()
-
+	return string(v)
 }
 
+/*
+func SubString(str string, begin, length int) (substr string) {
+	// 将字符串的转换成[]rune
+	rs := []rune(str)
+	lth := len(rs)
+
+	// 简单的越界判断
+	if begin < 0 {
+		begin = 0
+	}
+	if begin >= lth {
+		begin = lth
+	}
+	end := begin + length
+	if end > lth {
+		end = lth
+	}
+	// 返回子串
+	return string(rs[begin:end])
+}
+	prePath := SubString(path, 0, strings.LastIndex(path, "/"))
+	if prePath == "" {
+		prePath = "/"
+	}
+	jData := GetZooJson(prePath)
+	fmt.Println("!!  " + prePath + "  !!!" + jData)
+*/
 /*
 	/*group := znode{
 	1,

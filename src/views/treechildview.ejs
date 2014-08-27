@@ -2,12 +2,12 @@
 <%function showmenu(menu){%>
         <%for(var i=0;i<menu.Childs.length;i++){%>
             <%if(menu.Childs[i].Childs.length>0){ %>
-                <li><a href="<%=menu.Childs[i].Url%>" ref="<%=menu.Childs[i].Id%>" target="_parent"><%=menu.Childs[i].Name%></a></li>
+                <li><a href="/getValue<%=menu.Childs[i].Url%>" ref="<%=menu.Childs[i].Id%>" target="_parent"><%=menu.Childs[i].Name%></a></li>
                     <ul show="true">
                     <%showmenu(menu.Childs[i]);%>
                     </ul>
 <%          }else if(renderobj.key!=null&&menu.Childs[i].Name.indexOf(renderobj.key)>-1){%>
-             <li><a href="<%=menu.Childs[i].Url%>" ref="<%=menu.Childs[i].Id%>" target="_parent"><%=menu.Childs[i].Name%></a></li>
+             <li><a href="/getValue<%=menu.Childs[i].Url%>" ref="<%=menu.Childs[i].Id%>" target="_parent"><%=menu.Childs[i].Name%></a></li>
 <%          }%>
 <%
         }
