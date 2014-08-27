@@ -1,4 +1,4 @@
-golang-websocket-zk
+golang-monitor-zookeeper
 ===================
 golang monitor zookeeper server status websocket app
 已实现功能
