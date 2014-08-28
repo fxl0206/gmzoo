@@ -13,9 +13,9 @@ install steps
 
 引用项目
 =====================================
-https://github.com/samuel/go-zookeeper
-https://code.google.com/p/go.net/websocket
-https://github.com/widuu/conf
+1. https://github.com/samuel/go-zookeeper
+2. https://code.google.com/p/go.net/websocket
+3. https://github.com/widuu/conf
 
 已实现功能
 ==================================================
