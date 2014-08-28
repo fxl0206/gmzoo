@@ -4,36 +4,59 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"controllers/json"
 	"controllers/zkvalue"
-	//"controllers/wbsocket"
 	"fmt"
 	zk "fxl.com/utils"
+	"github.com/widuu"
+	"html/template"
 	"log"
 	"net/http"
 	"regexp"
 )
 
-type WbServer struct {
-	Port        string
-	MoniterPath string
+var ConfPath string
+var socketPath string
+
+func NewInstance(confPath string, serverName string) WbServer {
+	conf := goini.SetConfig(confPath)
+	port := conf.GetValue(serverName, "port")
+	viewPath := conf.GetValue(serverName, "viewPath")
+	ConfPath = confPath
+	wsPath := conf.GetValue("websocket", "wsPath")
+	wsPort := conf.GetValue("websocket", "port")
+	wsIp := conf.GetValue("websocket", "wsIp")
+	socketPath = "ws://" + wsIp + ":" + wsPort + "/" + wsPath
+	return WbServer{port, viewPath, serverName}
 }
 
+type WbServer struct {
+	port       string
+	viewPath   string
+	ServerName string
+}
+
+func (this *WbServer) Start() {
+	http.Handle("/ws", websocket.Handler(DealSocketReq))
+	http.HandleFunc("/"+this.viewPath+"/", StaticServer)
+	http.HandleFunc("/getMenu", json.EchoMenu)
+	http.HandleFunc(zkvalue.Prefix+"/", zkvalue.EchoValue)
+	err := http.ListenAndServe(":"+this.port, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
+}
 func StaticServer(w http.ResponseWriter, r *http.Request) {
+	filePath := r.URL.Path[len("/"):]
 	log.Println(r.URL.Path)
 	if m, _ := regexp.MatchString("/json", r.URL.Path); m {
 		w.Header().Add("Content-Type", "application/json")
 		log.Println(w.Header().Get("Content-Type"))
 	}
-	log.Println(r.URL.Path)
-	http.ServeFile(w, r, r.URL.Path[len("/"):])
-}
-func (this *WbServer) Start() {
-	http.Handle("/ws", websocket.Handler(DealSocketReq))
-	http.HandleFunc("/views/", StaticServer)
-	http.HandleFunc("/getMenu", json.EchoMenu)
-	http.HandleFunc(zkvalue.Prefix+"/", zkvalue.EchoValue)
-	err := http.ListenAndServe(":"+this.Port, nil)
-	if err != nil {
-		log.Fatal("ListenAndServe:", err)
+	if m, _ := regexp.MatchString("/menu.html", filePath); m {
+		t := template.New("menu.html")
+		t.ParseFiles(filePath)
+		t.Execute(w, socketPath)
+	} else {
+		http.ServeFile(w, r, filePath)
 	}
 }
 func DealSocketReq(ws *websocket.Conn) {

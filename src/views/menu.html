@@ -57,7 +57,7 @@ $(function(){
 </html>
   <script type="text/javascript">
     var webSocket =
-      new WebSocket('ws://127.0.0.1:8000/ws');
+      new WebSocket('{{.}}');
 
     webSocket.onerror = function(event) {
       onError(event)

@@ -4,8 +4,8 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	"github.com/samuel/go-zookeeper/zk"
+	"github.com/widuu"
 	"log"
-	//"strings"
 	"time"
 )
 
@@ -18,6 +18,13 @@ type znode struct {
 
 func (n *znode) addChild(node znode) {
 	n.Childs = append(n.Childs, node)
+}
+func (n *znode) ToJsonStr() string {
+	v, err := json.Marshal(n)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(v)
 }
 
 var WsConnSlise = []*websocket.Conn{}
@@ -92,7 +99,11 @@ func GetConnection() *zk.Conn {
 	return Zc
 }
 func getNewConnection() *zk.Conn {
-	c, _, err := zk.Connect([]string{"115.29.8.106"}, time.Second) //*10)
+	serverName := "zookeeper"
+	cf := goini.SetConfig("")
+	ip := cf.GetValue(serverName, "ip")
+	port := cf.GetValue(serverName, "port")
+	c, _, err := zk.Connect([]string{ip + ":" + port}, time.Second) //*10)
 	if err != nil {
 		panic(err)
 	}
@@ -102,13 +113,6 @@ func GetZooJson(path string) string {
 	Zc = GetConnection()
 	node := qryNode(0, path, Zc)
 	return node.ToJsonStr()
-}
-func (n *znode) ToJsonStr() string {
-	v, err := json.Marshal(n)
-	if err != nil {
-		log.Println(err)
-	}
-	return string(v)
 }
 
 /*
