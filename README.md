@@ -2,14 +2,14 @@ golang-monitor-zookeeper
 ===================
 golang monitor zookeeper server status width  websocket
 
-安装方法
+install steps
 ===============================
 1. git clone https://github.com/fxl0206/gmzoo
 2. cd gmzoo/src/sbin
 3. ./install.sh
 4. cd ../../sbin
 5. ./build.sh
-6. ./sstart_gmzoo.sh
+6. ./start_gmzoo.sh
 
 已实现功能
 ==================================================
