@@ -11,6 +11,12 @@ install steps
 5. ./build.sh
 6. ./start_gmzoo.sh
 
+引用项目
+=====================================
+1. https://github.com/samuel/go-zookeeper
+2. https://code.google.com/p/go.net/websocket
+3. https://github.com/widuu/conf
+
 已实现功能
 ==================================================
 1.Golang提供Http Web服务，生成简易监控页面
