@@ -5,9 +5,14 @@ import (
 	"os"
 )
 
+const (
+	defaultConfFile   string = "conf/gmzoo.ini"
+	defaultServerName string = "webserver"
+)
+
 func main() {
-	confPath := "./conf/gmzoo.ini"
-	serverName := "webserver"
+	confPath := defaultConfFile
+	serverName := defaultServerName
 	args := os.Args
 	if len(args) > 1 {
 		confPath = args[1]
