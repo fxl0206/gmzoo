@@ -12,4 +12,6 @@ func Test(t *testing.T) {
 	log.Println(wbPort) //root
 	data := conf.ReadList()
 	log.Println(data)
+	xx := make(map[int]interface{})
+	log.Println(xx)
 }

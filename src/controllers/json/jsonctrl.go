@@ -6,7 +6,8 @@ import (
 	//"log"
 	"net/http"
 	//"os"
-	zk "fxl.com/utils"
+	//zk "fxl.com/utils"
+	"gmzoo.com/zook"
 )
 
 func EchoMenu(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,8 @@ func EchoMenu(w http.ResponseWriter, r *http.Request) {
 	//t.ParseFiles("views/menus.json")
 	//t, _ = t.Parse("/views/menus.json")
 	//t.Execute(w, nil)
-	fmt.Fprintln(w, zk.GetZooJson("/"))
+	conn := zook.GetZConn()
+	fmt.Fprintln(w, conn.GetJsonByPath("/"))
 	/*fileName := "menus.json"
 	fl, err := os.Open(fileName)
 	defer fl.Close()

@@ -2,30 +2,12 @@ package zkUtil
 
 import (
 	"code.google.com/p/go.net/websocket"
-	"encoding/json"
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/widuu"
+	"gmzoo.com/node"
 	"log"
 	"time"
 )
-
-type znode struct {
-	Id     int
-	Name   string
-	Url    string
-	Childs []znode
-}
-
-func (n *znode) addChild(node znode) {
-	n.Childs = append(n.Childs, node)
-}
-func (n *znode) ToJsonStr() string {
-	v, err := json.Marshal(n)
-	if err != nil {
-		log.Println(err)
-	}
-	return string(v)
-}
 
 var WsConnSlise = []*websocket.Conn{}
 var WsSlise *websocket.Conn
@@ -56,10 +38,10 @@ func nodeChage(zh <-chan zk.Event) {
 
 var EvtCache = make(map[string]<-chan zk.Event)
 
-func qryNode(id int, rPath string, c *zk.Conn) znode {
+func qryNode(id int, rPath string, c *zk.Conn) node.Znode {
 
 	children, _, nodeEvt, err := c.ChildrenW(rPath)
-	ret := znode{id, rPath, rPath, []znode{}}
+	ret := node.Znode{id, rPath, rPath, []node.Znode{}}
 	if err != nil {
 		log.Println(err)
 		EvtCache[rPath] = nil
@@ -75,7 +57,7 @@ func qryNode(id int, rPath string, c *zk.Conn) znode {
 			}
 			cPath := fixPath + "/" + child
 			cRet := qryNode(i, cPath, c)
-			ret.addChild(cRet)
+			ret.AddChild(cRet)
 		}
 	}
 	return ret

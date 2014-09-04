@@ -11,6 +11,7 @@ package goini
 
 import (
 	"bufio"
+	"conf"
 	"fmt"
 	"io"
 	"os"
@@ -22,16 +23,13 @@ type Config struct {
 	conflist []map[string]map[string]string //configuration information slice
 }
 
-var ConfFilePath string
-
 //Create an empty configuration file
 func SetConfig(filepath string) *Config {
 	c := new(Config)
 	if filepath != "" {
 		c.filepath = filepath
-		ConfFilePath = filepath
 	} else {
-		c.filepath = ConfFilePath
+		c.filepath = conf.CurConfFile
 	}
 	return c
 }

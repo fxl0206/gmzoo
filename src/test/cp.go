@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"log"
 )
 
 func main() {
-	var i int = 1
-	i += 2
-	j := i + 3
-	fmt.Println(j)
+	xx := make(map[int]interface{})
+	log.Println(xx)
 }

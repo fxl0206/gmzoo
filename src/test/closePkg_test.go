@@ -10,11 +10,6 @@ func Test_Xxx(*testing.T) {
 	f := pkg()
 	f()
 }
-func main() {
-	log.Println("")
-	f := pkg()
-	f()
-}
 func pkg() func() {
 	type Human struct {
 		age  int
